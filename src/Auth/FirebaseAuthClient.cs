@@ -19,15 +19,8 @@ namespace Firebase.Auth
 
         public FirebaseAuthClient(FirebaseAuthConfig config)
         {
-            if (string.IsNullOrWhiteSpace(config?.ApiKey))
-            {
-                throw new ArgumentException($"API Key must be set.");
-            }
-
-            if (string.IsNullOrWhiteSpace(config?.AuthDomain))
-            {
-                throw new ArgumentException($"Auth domain must be set.");
-            }
+            ArgumentException.ThrowIfNullOrWhiteSpace(config?.ApiKey);
+            ArgumentException.ThrowIfNullOrWhiteSpace(config?.AuthDomain);
 
             this.config = config;
             this.projectConfig = new ProjectConfig(this.config);

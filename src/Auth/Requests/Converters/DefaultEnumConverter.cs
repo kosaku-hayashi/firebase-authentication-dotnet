@@ -1,7 +1,6 @@
 ﻿using Newtonsoft.Json.Converters;
 using Newtonsoft.Json;
 using System;
-using System.Reflection;
 
 namespace Firebase.Auth.Requests.Converters
 {
@@ -62,7 +61,7 @@ namespace Firebase.Auth.Requests.Converters
         /// <returns>True if the base class says so, and if the value is an enum and has a default value to fall on.</returns>
         public override bool CanConvert(Type objectType)
         {
-            return base.CanConvert(objectType) && objectType.GetTypeInfo().IsEnum && Enum.IsDefined(objectType, defaultValue);
+            return base.CanConvert(objectType) && objectType.IsEnum && Enum.IsDefined(objectType, defaultValue);
         }
     }
 }

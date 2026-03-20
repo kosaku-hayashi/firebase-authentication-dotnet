@@ -6,7 +6,7 @@ namespace Firebase.Auth.Repository
     /// <inherit />
     public class InMemoryRepository : IUserRepository
     {
-        private static InMemoryRepository instance;
+        private static readonly Lazy<InMemoryRepository> lazy = new(() => new InMemoryRepository());
 
         private User user;
 
@@ -14,7 +14,7 @@ namespace Firebase.Auth.Repository
         {
         }
 
-        public static InMemoryRepository Instance => instance ?? (instance = new InMemoryRepository());
+        public static InMemoryRepository Instance => lazy.Value;
 
         public bool UserExists()
         {

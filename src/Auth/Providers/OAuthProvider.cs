@@ -1,7 +1,6 @@
 ﻿using Firebase.Auth.Requests;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Firebase.Auth.Providers
@@ -45,7 +44,10 @@ namespace Firebase.Auth.Providers
 
         public virtual FirebaseAuthProvider AddCustomParameters(params KeyValuePair<string, string>[] parameters)
         {
-            parameters.ToList().ForEach(p => this.parameters.Add(p.Key, p.Value));
+            foreach (var p in parameters)
+            {
+                this.parameters.Add(p.Key, p.Value);
+            }
 
             return this;
         }
@@ -114,12 +116,12 @@ namespace Firebase.Auth.Providers
 
             response.Validate(credential);
 
-            return new UserCredential(user, this.GetCredential(response), OperationType.Link);
+            return new UserCredential(user, credential, OperationType.Link);
         }
 
         protected string GetParsedOauthScopes()
         {
-            if (!this.scopes.Any())
+            if (this.scopes.Count == 0)
             {
                 return null;
             }

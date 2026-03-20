@@ -1,22 +1,24 @@
 ﻿namespace Firebase.Auth
 {
     using System;
-    using System.Linq;
-    using System.Reflection;
-    using System.Runtime.Serialization;
 
     public static class EnumExtensions
     {
         /// <summary>
-        /// Finds the <see cref="EnumMemberAttribute"/> on given enum and returns its value.
+        /// Returns the string representation of <see cref="FirebaseProviderType"/> as defined
+        /// by its <c>EnumMember</c> attribute values. Uses a switch expression to avoid reflection.
         /// </summary>
-        public static string ToEnumString<T>(this T type)
+        public static string ToEnumString(this FirebaseProviderType type) => type switch
         {
-            var enumType = typeof(T);
-            var name = Enum.GetName(enumType, type);
-            var enumMemberAttribute = ((EnumMemberAttribute[])enumType.GetTypeInfo().DeclaredFields.First(f => f.Name == name).GetCustomAttributes(typeof(EnumMemberAttribute), true)).Single();
-
-            return enumMemberAttribute.Value;
-        }
+            FirebaseProviderType.Facebook       => "facebook.com",
+            FirebaseProviderType.Google         => "google.com",
+            FirebaseProviderType.Github         => "github.com",
+            FirebaseProviderType.Twitter        => "twitter.com",
+            FirebaseProviderType.Microsoft      => "microsoft.com",
+            FirebaseProviderType.Apple          => "apple.com",
+            FirebaseProviderType.EmailAndPassword => "password",
+            FirebaseProviderType.Phone          => "phone",
+            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
+        };
     }
 }

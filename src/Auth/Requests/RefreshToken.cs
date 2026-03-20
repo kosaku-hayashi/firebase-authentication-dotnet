@@ -26,18 +26,19 @@ namespace Firebase.Auth.Requests
     /// </summary>
     public class RefreshToken : FirebaseRequestBase<RefreshTokenRequest, RefreshTokenResponse>
     {
+        private static readonly JsonSerializerSettings SnakeCaseSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver
+            {
+                NamingStrategy = new SnakeCaseNamingStrategy()
+            }
+        };
+
         public RefreshToken(FirebaseAuthConfig config) : base(config)
         {
-            this.JsonSettingsOverride = new JsonSerializerSettings
-            {
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new SnakeCaseNamingStrategy()
-                }
-            };
         }
 
-        protected override JsonSerializerSettings JsonSettingsOverride { get; }
+        protected override JsonSerializerSettings JsonSettingsOverride => SnakeCaseSettings;
 
         protected override string UrlFormat => Endpoints.GoogleRefreshAuth;
     }

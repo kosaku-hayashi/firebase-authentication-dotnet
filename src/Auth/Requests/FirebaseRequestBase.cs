@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,7 +50,7 @@ namespace Firebase.Auth.Requests
 
                 if(config.CustomHeadersProvider != null)
                 {
-                    foreach(var header in await config.CustomHeadersProvider())
+                    foreach(var header in config.CustomHeadersProvider() ?? [])
                     {
                         message.Headers.Add(header.name, header.value);
                     }

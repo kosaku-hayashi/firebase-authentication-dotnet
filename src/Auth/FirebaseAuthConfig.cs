@@ -1,4 +1,4 @@
-﻿using Firebase.Auth.Providers;
+using Firebase.Auth.Providers;
 using Firebase.Auth.Repository;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -88,7 +88,7 @@ namespace Firebase.Auth
             set;
         }
 
-        public Func<Task<IEnumerable<(string name,string value)>>> CustomHeadersProvider { get; set; }
+        public Func<IEnumerable<(string name,string value)>> CustomHeadersProvider { get; set; }
 
         /// <summary>
         /// Specifies the uri that oauth provider will navigate to to finish auth.

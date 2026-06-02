@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Firebase.Auth.Requests
@@ -61,7 +61,7 @@ namespace Firebase.Auth.Requests
 
         public bool NeedConfirmation { get; set; }
 
-        [JsonProperty("verifiedProvider")]
+        [JsonPropertyName("verifiedProvider")]
         public FirebaseProviderType[] VerifiedProviders { get; set; }
 
         public string ErrorMessage { get; set; }

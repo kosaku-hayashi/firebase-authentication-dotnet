@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Firebase.Auth.Repository
@@ -15,7 +15,7 @@ namespace Firebase.Auth.Repository
         public const string UserFileName = "firebase.json";
         
         private readonly string filename;
-        private readonly JsonSerializerSettings options;
+        private readonly JsonSerializerOptions options;
 
         /// <summary>
         /// Creates new instance of <see cref="FileUserRepository"/>.
@@ -25,8 +25,8 @@ namespace Firebase.Auth.Repository
         {
             var appdata = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             this.filename = Path.Combine(appdata, folder, UserFileName);
-            this.options = new JsonSerializerSettings();
-            this.options.Converters.Add(new StringEnumConverter());
+            this.options = new JsonSerializerOptions();
+            this.options.Converters.Add(new JsonStringEnumConverter());
 
             Directory.CreateDirectory(Path.Combine(appdata, folder));
         }
@@ -34,13 +34,13 @@ namespace Firebase.Auth.Repository
         public virtual (UserInfo, FirebaseCredential) ReadUser()
         {
             var content = File.ReadAllText(this.filename);
-            var obj = JsonConvert.DeserializeObject<UserDal>(content, this.options);
+            var obj = JsonSerializer.Deserialize<UserDal>(content, this.options);
             return (obj.UserInfo, obj.Credential);
         }
 
         public virtual void SaveUser(User user)
         {
-            var content = JsonConvert.SerializeObject(new UserDal(user.Info, user.Credential), this.options);
+            var content = JsonSerializer.Serialize(new UserDal(user.Info, user.Credential), this.options);
             File.WriteAllText(this.filename, content);
         }
 

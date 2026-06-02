@@ -1,10 +1,10 @@
-using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Firebase.Auth.Requests
@@ -32,12 +32,12 @@ namespace Firebase.Auth.Requests
 
         protected virtual HttpMethod Method => HttpMethod.Post;
 
-        protected virtual JsonSerializerSettings JsonSettingsOverride => null;
+        protected virtual JsonSerializerOptions JsonSettingsOverride => null;
 
         public virtual async Task<TResponse> ExecuteAsync(TRequest request)
         {
             var responseData = string.Empty;
-            var requestData = request != null ? JsonConvert.SerializeObject(request, this.JsonSettingsOverride ?? this.config.JsonSettings) : null;
+            var requestData = request != null ? JsonSerializer.Serialize(request, request.GetType(), this.JsonSettingsOverride ?? this.config.JsonSettings) : null;
             var url = this.GetFormattedUrl(this.config.ApiKey);
 
             try
@@ -59,7 +59,7 @@ namespace Firebase.Auth.Requests
                 var httpResponse = await this.config.HttpClient.SendAsync(message).ConfigureAwait(false);
                 responseData = await httpResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
                 
-                var response = JsonConvert.DeserializeObject<TResponse>(responseData, this.JsonSettingsOverride ?? this.config.JsonSettings);
+                var response = JsonSerializer.Deserialize<TResponse>(responseData, this.JsonSettingsOverride ?? this.config.JsonSettings);
 
                 httpResponse.EnsureSuccessStatusCode();
 

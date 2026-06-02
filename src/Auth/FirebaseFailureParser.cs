@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.Text.Json;
 
 namespace Firebase.Auth
 {
@@ -22,11 +22,15 @@ namespace Firebase.Auth
             try
             {
                 //create error data template and try to parse JSON
-                var errorData = new { error = new { code = 0, message = "errorid" } };
-                errorData = JsonConvert.DeserializeAnonymousType(responseData, errorData);
+                using var doc = JsonDocument.Parse(responseData);
+                var root = doc.RootElement;
+
+                string message = null;
+                if (root.TryGetProperty("error", out var error) && error.TryGetProperty("message", out var msgProp))
+                    message = msgProp.GetString();
 
                 //errorData is just null if different JSON was received
-                switch (errorData?.error?.message)
+                switch (message)
                 {
                     //general errors
                     case "invalid access_token, error code 43.":
@@ -91,23 +95,23 @@ namespace Firebase.Auth
                         return AuthErrorReason.AlreadyLinked;
                 }
 
-                if (errorData?.error?.message?.StartsWith("WEAK_PASSWORD :") ?? false)
+                if (message?.StartsWith("WEAK_PASSWORD :") ?? false)
                 {
                     // possible errors from Email/Password Account Signup (via signupNewUser or setAccountInfo)
                     return AuthErrorReason.WeakPassword;
                 }
-                else if (errorData?.error?.message?.StartsWith("TOO_MANY_ATTEMPTS_TRY_LATER :") ?? false)
+                else if (message?.StartsWith("TOO_MANY_ATTEMPTS_TRY_LATER :") ?? false)
                 {
                     // possible errors from Email/Password Signin
                     return AuthErrorReason.TooManyAttemptsTryLater;
                 }
-                else if (errorData?.error?.message?.Contains("Bad access token") ?? false)
+                else if (message?.Contains("Bad access token") ?? false)
                 {
                     return AuthErrorReason.InvalidAccessToken;
                 }
                 
             }
-            catch (JsonReaderException)
+            catch (JsonException)
             {
                 //the response wasn't JSON - no data to be parsed
             }

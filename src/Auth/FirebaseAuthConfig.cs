@@ -1,12 +1,11 @@
 using Firebase.Auth.Providers;
 using Firebase.Auth.Repository;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Firebase.Auth
@@ -23,15 +22,12 @@ namespace Firebase.Auth
             this.HttpClient = httpClient ?? new HttpClient();
             this.UserRepository = InMemoryRepository.Instance;
             this.Providers = Array.Empty<FirebaseAuthProvider>();
-            this.JsonSettings = new JsonSerializerSettings
+            this.JsonSettings = new JsonSerializerOptions
             {
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                },
-                DefaultValueHandling = DefaultValueHandling.Ignore
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
             };
-            this.JsonSettings.Converters.Add(new StringEnumConverter { NamingStrategy = new CamelCaseNamingStrategy() });
+            this.JsonSettings.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
         }
 
         /// <summary>
@@ -62,9 +58,9 @@ namespace Firebase.Auth
         }
 
         /// <summary>
-        /// Json.net serializer settings.
+        /// System.Text.Json serializer options.
         /// </summary>
-        public JsonSerializerSettings JsonSettings 
+        public JsonSerializerOptions JsonSettings 
         { 
             get; 
             set; 

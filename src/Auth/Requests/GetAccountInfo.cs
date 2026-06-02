@@ -1,6 +1,6 @@
 ﻿using Firebase.Auth.Requests.Converters;
-using Newtonsoft.Json;
 using System;
+using System.Text.Json.Serialization;
 
 namespace Firebase.Auth.Requests
 {

@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using System.Text.Json;
 
 namespace Firebase.Auth.Requests
 {
@@ -26,19 +25,16 @@ namespace Firebase.Auth.Requests
     /// </summary>
     public class RefreshToken : FirebaseRequestBase<RefreshTokenRequest, RefreshTokenResponse>
     {
-        private static readonly JsonSerializerSettings SnakeCaseSettings = new JsonSerializerSettings
+        private static readonly JsonSerializerOptions SnakeCaseSettings = new JsonSerializerOptions
         {
-            ContractResolver = new DefaultContractResolver
-            {
-                NamingStrategy = new SnakeCaseNamingStrategy()
-            }
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
         };
 
         public RefreshToken(FirebaseAuthConfig config) : base(config)
         {
         }
 
-        protected override JsonSerializerSettings JsonSettingsOverride => SnakeCaseSettings;
+        protected override JsonSerializerOptions JsonSettingsOverride => SnakeCaseSettings;
 
         protected override string UrlFormat => Endpoints.GoogleRefreshAuth;
     }
